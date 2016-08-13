@@ -3,6 +3,7 @@ package controllers;
 import com.google.inject.Inject;
 import model.JsonContent;
 import modules.SecurityModule;
+import org.pac4j.cas.profile.CasProxyProfile;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
@@ -97,15 +98,14 @@ public class Application extends Controller {
 
     @Secure(clients = "CasClient")
     public Result casIndex() {
-        /*final CommonProfile profile = getProfiles().get(0);
-        final String service = "http://localhost:8080/proxiedService";
+        final CommonProfile profile = getProfiles().get(0);
+        final String service = "http://test";
         String proxyTicket = null;
         if (profile instanceof CasProxyProfile) {
             final CasProxyProfile proxyProfile = (CasProxyProfile) profile;
             proxyTicket = proxyProfile.getProxyTicketFor(service);
         }
-        return ok(views.html.casProtectedIndex.render(profile, service, proxyTicket));*/
-        return protectedIndexView();
+        return ok(views.html.casProtectedIndex.render(profile, service, proxyTicket));
     }
 
     @Secure(clients = "SAML2Client")

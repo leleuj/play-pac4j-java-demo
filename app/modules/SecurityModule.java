@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import controllers.CustomAuthorizer;
 import controllers.DemoHttpActionAdapter;
 import org.pac4j.cas.client.CasClient;
+import org.pac4j.cas.client.CasProxyReceptor;
+import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
@@ -61,13 +63,12 @@ public class SecurityModule extends AbstractModule {
         // CAS
         // final CasOAuthWrapperClient casClient = new CasOAuthWrapperClient("this_is_the_key2", "this_is_the_secret2", "http://localhost:8080/cas2/oauth2.0");
         // casClient.setName("CasClient");
-        final CasClient casClient = new CasClient("https://casserverpac4j.herokuapp.com/login");
-        casClient.setLogoutHandler(new PlayCacheLogoutHandler(getProvider(CacheApi.class)));
-
-        // casClient.setGateway(true);
-        /*final CasProxyReceptor casProxyReceptor = new CasProxyReceptor();
-        casProxyReceptor.setCallbackUrl("http://localhost:9000/casProxyCallback");
-        casClient.setCasProxyReceptor(casProxyReceptor);*/
+        //final CasClient casClient = new CasClient("https://casserverpac4j.herokuapp.com/login");
+        final CasConfiguration configuration = new CasConfiguration("http://localhost:8888/cas/login");
+        final CasProxyReceptor casProxy = new CasProxyReceptor();
+        configuration.setLogoutHandler(new PlayCacheLogoutHandler(getProvider(CacheApi.class)));
+        configuration.setProxyReceptor(casProxy);
+        final CasClient casClient = new CasClient(configuration);
 
         // SAML
         final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration("resource:samlKeystore.jks",
@@ -94,7 +95,7 @@ public class SecurityModule extends AbstractModule {
         final DirectBasicAuthClient directBasicAuthClient = new DirectBasicAuthClient(new SimpleTestUsernamePasswordAuthenticator());
 
         final Clients clients = new Clients(baseUrl + "/callback", facebookClient, twitterClient, formClient,
-                indirectBasicAuthClient, casClient, saml2Client, oidcClient, parameterClient, directBasicAuthClient); // , casProxyReceptor);
+                indirectBasicAuthClient, casClient, saml2Client, oidcClient, parameterClient, directBasicAuthClient, casProxy);
 
         final Config config = new Config(clients);
         config.addAuthorizer("admin", new RequireAnyRoleAuthorizer<>("ROLE_ADMIN"));
