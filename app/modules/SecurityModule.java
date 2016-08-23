@@ -21,7 +21,7 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.play.ApplicationLogoutController;
 import org.pac4j.play.CallbackController;
 import org.pac4j.play.cas.logout.PlayCacheLogoutHandler;
-import org.pac4j.play.store.PlayCacheStore;
+import org.pac4j.play.store.PlayCacheSessionStore;
 import org.pac4j.play.store.PlaySessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.client.SAML2ClientConfiguration;
@@ -46,7 +46,7 @@ public class SecurityModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        bind(PlaySessionStore.class).to(PlayCacheStore.class);
+        bind(PlaySessionStore.class).to(PlayCacheSessionStore.class);
 
         final String fbId = configuration.getString("fbId");
         final String fbSecret = configuration.getString("fbSecret");
@@ -66,7 +66,7 @@ public class SecurityModule extends AbstractModule {
         //final CasClient casClient = new CasClient("https://casserverpac4j.herokuapp.com/login");
         final CasConfiguration configuration = new CasConfiguration("http://localhost:8888/cas/login");
         final CasProxyReceptor casProxy = new CasProxyReceptor();
-        configuration.setLogoutHandler(new PlayCacheLogoutHandler(getProvider(CacheApi.class)));
+        //configuration.setLogoutHandler(new PlayCacheLogoutHandler(getProvider(CacheApi.class)));
         configuration.setProxyReceptor(casProxy);
         final CasClient casClient = new CasClient(configuration);
 
